@@ -6,4 +6,6 @@ After the instructor advisor for the project merges the pull requests, coding ma
 
 Example of embedded image in Markdown in README.md:
 
+
 ![](readme_assets/images/final_project_ERD.jpg)
+![](readme_assets/images/final-project-wireframe.jpg)
