@@ -9,26 +9,18 @@
 
 response = HTTParty.get('https://evbite.com/all-electric-cars-available-in-2018/'); nil
 parsed_body = Nokogiri::HTML(response.body); nil
-makes_table = parsed_body.css('#tablepress-8 tbody tr .column-1'); nil
-cars_table = parsed_body.css('#tablepress-8 tbody tr'); nil
+vehicles_table = parsed_body.css('#tablepress-8 tbody tr'); nil
 
-makes = makes_table.map { |make| {name: make.text}}.uniq
-cars = cars_table.map do |car|
-  min_range = car.css('.column-4').text.split(' ')[0]
+vehicles = vehicles_table.map do |vehicle|
   {
-      make: car.css('.column-1').text.downcase,
-      name: car.css('.column-2').text,
-      range: min_range
+      make: vehicle.css('.column-1').text.downcase,
+      name: vehicle.css('.column-2').text,
+      range: vehicle.css('.column-4').text.split(' ')[0]
   }
 end
 
-makes.each do |make|
-  puts "Creating #{make}"
-  Make.find_or_create_by!(make)
-end
 
-cars.each do |car|
-  car[:make_id] = Make.send(car.delete(:make)).id
-  puts "Creating #{car}"
-  Car.find_or_create_by!(car)
+vehicles.each do |vehicle|
+  puts "Creating #{vehicle}"
+  Vehicle.find_or_create_by!(vehicle)
 end

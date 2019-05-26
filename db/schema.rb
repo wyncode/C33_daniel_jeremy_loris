@@ -10,22 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_25_213730) do
+ActiveRecord::Schema.define(version: 2019_05_26_172042) do
 
-  create_table "cars", force: :cascade do |t|
+  create_table "vehicles", force: :cascade do |t|
+    t.string "make"
     t.string "name"
     t.integer "range"
-    t.integer "make_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["make_id"], name: "index_cars_on_make_id"
-  end
-
-  create_table "makes", force: :cascade do |t|
-    t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key "cars", "makes"
 end
