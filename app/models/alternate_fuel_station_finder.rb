@@ -1,5 +1,3 @@
-require 'httparty'
-
 class AlternateFuelStationFinder
   attr_reader :origin, :destination
 
