@@ -1,0 +1,24 @@
+<h1>FuelStations#index</h1>
+<p>Find me in app/views/fuel_stations/index.html.erb</p>
+
+
+<%= form_tag("/", method: "get") do %>
+  <%= label_tag(:origin, "Origin") %>
+  <%= text_field_tag(:origin) %>
+  <br>
+  <%= label_tag(:destination, "Destination") %>
+  <%= text_field_tag(:destination) %>
+  <br>
+  <%= submit_tag("Search") %>
+<% end %>
+
+<%# @stations.each do |station| %>
+
+
+    <%#= station.station_name %>
+    <%#= @stations["fuel_stations"].each |y| %>
+       <%#= y["station_name"] %>
+    <%#end%>
+
+ 
+    <%= @stations["fuel_stations"][0]["station_name"] %>
