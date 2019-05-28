@@ -3,8 +3,8 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.3'
 
-gem 'httparty', '~> 0.17.0'
-gem 'dotenv-rails', '~> 2.7', '>= 2.7.2'
+gem 'httparty'
+gem 'dotenv-rails'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.0.0.rc1'
 # Use sqlite3 as the database for Active Record
