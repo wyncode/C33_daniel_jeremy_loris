@@ -1,16 +1,19 @@
 class FuelStationsController < ApplicationController
   def index
     if params[:origin].present? && params[:destination].present?
-      @stations = AlternateFuelStationFinder.new(
-                    params[:origin], params[:destination]
-                  ).run rescue []
-      if @stations.size > 0
-        page      = (params[:page] || 1).to_i
-        per_page  = 50
-        @stations = @stations.paginate(page: page, per_page: per_page)
+      begin
+        @stations = AlternateFuelStationFinder.new(
+                      params[:origin], params[:destination]
+                    ).run
+      rescue StandardError => e
+        @stations = []
+        @error = e.message
       end
     else
       @stations = []
     end
+    page      = (params[:page] || 1).to_i
+    per_page  = 50
+    @stations = @stations.paginate(page: page, per_page: per_page)
   end
 end
