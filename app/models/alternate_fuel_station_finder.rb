@@ -20,7 +20,7 @@ class AlternateFuelStationFinder
         'Content-Type' => 'application/x-www-form-urlencoded'
       }
     )
-    JSON.parse(response.body)
+    JSON.parse(response.body)["fuel_stations"]
   end
 
   private
