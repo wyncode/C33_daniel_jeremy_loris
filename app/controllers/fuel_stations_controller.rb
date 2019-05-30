@@ -7,7 +7,7 @@ class FuelStationsController < ApplicationController
                     ).run
       rescue StandardError => e
         @stations = []
-        flash[:alert] = e.message
+        flash.now[:alert] = e.message
       end
     else
       @stations = []
