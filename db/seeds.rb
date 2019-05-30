@@ -13,7 +13,7 @@ vehicles_table = parsed_body.css('#tablepress-8 tbody tr'); nil
 
 vehicles = vehicles_table.map do |vehicle|
   {
-      make: vehicle.css('.column-1').text.downcase,
+      make: vehicle.css('.column-1').text,
       name: vehicle.css('.column-2').text,
       range: vehicle.css('.column-4').text.split(' ')[0]
   }
