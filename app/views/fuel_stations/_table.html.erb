@@ -1,0 +1,23 @@
+<table>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Station Name</th>
+      <th>Station Phone</th>
+      <th>City</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% stations.each do |station| %>
+      <tr>
+        <td><%= station["id"] %></td>
+        <td><%= station["station_name"] %></td>
+        <td><%= station["station_phone"] %></td>
+        <td><%=station["city"] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= will_paginate stations %>

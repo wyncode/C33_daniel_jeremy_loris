@@ -1,39 +1,20 @@
 <h1>FuelStations</h1>
 
 <%= form_tag root_url, method: "get" do %>
-    
-    <div> 
-        <%= label_tag :origin, "Origin" %>
-        <%= text_field_tag :origin, params[:origin]  %>
-    </div>
-    <div>
-        <%= label_tag :destination, "Destination" %>
-        <%= text_field_tag :destination, params[:destination] %>
-    </div>
-    <%= submit_tag "Search" %>
-    
+  <div>
+      <%= label_tag :origin, "Origin" %>
+      <%= text_field_tag :origin, params[:origin]  %>
+  </div>
+  <div>
+      <%= label_tag :destination, "Destination" %>
+      <%= text_field_tag :destination, params[:destination] %>
+  </div>
+  <%= submit_tag "Search" %>
 <% end %>
 
-<%= will_paginate @stations %>
-    <table>
-        <thead>
-            <tr>
-            <th>Id</th>
-            <th>Station Name</th>
-            <th>Station Phone</th>
-            <th>City</th>
-            </tr>            
-        </thead>
-            
-        <tbody>
-            <% @stations.each do |station| %>
-                <tr>
-                <td><%= station["id"] %></td> 
-                <td><%= station["station_name"] %></td>
-                <td><%= station["station_phone"] %></td>
-                <td><%=station["city"] %></td>
-                </tr>
-            <% end %>
-        </tbody>
-    </table>
-<%= will_paginate @stations %>
+<% if @stations.size > 0 %>
+  <%= render 'table', stations: @stations %>
+<% elsif params[:origin].present? && params[:destination].present? %>
+  <p>Something went wrong with the NREL API, try again!</p>
+<% end %>
+
