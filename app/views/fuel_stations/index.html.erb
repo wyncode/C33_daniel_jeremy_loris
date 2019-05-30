@@ -1,24 +1,39 @@
-<h1>FuelStations#index</h1>
-<p>Find me in app/views/fuel_stations/index.html.erb</p>
+<h1>FuelStations</h1>
 
-
-<%= form_tag("/", method: "get") do %>
-  <%= label_tag(:origin, "Origin") %>
-  <%= text_field_tag(:origin) %>
-  <br>
-  <%= label_tag(:destination, "Destination") %>
-  <%= text_field_tag(:destination) %>
-  <br>
-  <%= submit_tag("Search") %>
+<%= form_tag root_url, method: "get" do %>
+    
+    <div> 
+        <%= label_tag :origin, "Origin" %>
+        <%= text_field_tag :origin, params[:origin]  %>
+    </div>
+    <div>
+        <%= label_tag :destination, "Destination" %>
+        <%= text_field_tag :destination, params[:destination] %>
+    </div>
+    <%= submit_tag "Search" %>
+    
 <% end %>
 
-<%# @stations.each do |station| %>
-
-
-    <%#= station.station_name %>
-    <%#= @stations["fuel_stations"].each |y| %>
-       <%#= y["station_name"] %>
-    <%#end%>
-
- 
-    <%= @stations["fuel_stations"][0]["station_name"] %>
+<%= will_paginate @stations %>
+    <table>
+        <thead>
+            <tr>
+            <th>Id</th>
+            <th>Station Name</th>
+            <th>Station Phone</th>
+            <th>City</th>
+            </tr>            
+        </thead>
+            
+        <tbody>
+            <% @stations.each do |station| %>
+                <tr>
+                <td><%= station["id"] %></td> 
+                <td><%= station["station_name"] %></td>
+                <td><%= station["station_phone"] %></td>
+                <td><%=station["city"] %></td>
+                </tr>
+            <% end %>
+        </tbody>
+    </table>
+<%= will_paginate @stations %>
