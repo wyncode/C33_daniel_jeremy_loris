@@ -12,6 +12,9 @@
   <%= submit_tag "Search" %>
 <% end %>
 
+<%= react_component 'Map',
+    props: { mapbox_api_key: ENV['MAPBOX_API_KEY'] } %>
+
 <% if @stations.size > 0 %>
   <%= render 'table', stations: @stations %>
 <% end %>
