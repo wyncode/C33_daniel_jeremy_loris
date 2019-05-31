@@ -3,6 +3,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '2.6.3'
 
+gem 'react_on_rails'
 gem 'will_paginate'
 gem 'httparty'
 gem 'dotenv-rails'
