@@ -19,7 +19,9 @@ class FuelStationsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        @stations = AlternateFuelStationFinder.all
+        @stations = AlternateFuelStationFinder.new(
+                      params[:origin], params[:destination]
+                    ).run
         render json:  {
                         type: "FeatureCollection",
                         features: @stations.map do |station|
@@ -39,4 +41,4 @@ class FuelStationsController < ApplicationController
       end
     end
   end
-end
+end 
