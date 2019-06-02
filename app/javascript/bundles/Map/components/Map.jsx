@@ -1,8 +1,13 @@
 import React, { Component } from "react";
 import { parseGeoJson } from "./MapUtils";
+import axios from "axios";
 
 export default class Map extends Component {
-  componentDidMount() {
+  async componentDidMount() {
+    const foobar = await axios.get(
+      "https://api.mapbox.com/directions/v5/mapbox/driving-traffic/-80.1412223,25.7810476;-90.0490,35.1495.json?geometries=geojson&access_token=pk.eyJ1IjoibG9yc29saW5pMSIsImEiOiJjandjaWNtdHUwMXIxNDlveGtpOG93d2drIn0.6WJGj9W1keKk6_R5Wgzgfg"
+    );
+    console.log("foobar", foobar);
     mapboxgl.accessToken = this.props.mapbox_api_key;
     const mapOptions = {
       container: this.mapContainer,
@@ -40,9 +45,36 @@ export default class Map extends Component {
         trackUserLocation: true
       })
     );
-    const stations = parseGeoJson(this.props.stations);
+    const { stations } = this.props;
+    const stationsData = parseGeoJson(stations);
+    const lineCoordinates = stations.map(station => [
+      station.longitude,
+      station.latitude
+    ]);
+    const lineData = {
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "LineString",
+        coordinates: lineCoordinates
+      }
+    };
     map.on("load", _ => {
-      map.addSource("stations", { type: "geojson", data: stations });
+      map.addSource("stations", { type: "geojson", data: stationsData });
+      map.addSource("route", { type: "geojson", data: lineData });
+      map.addLayer({
+        id: "route",
+        type: "line",
+        source: "route",
+        layout: {
+          "line-join": "round",
+          "line-cap": "round"
+        },
+        paint: {
+          "line-color": "black",
+          "line-width": 8
+        }
+      });
       map.addLayer({
         id: "stations",
         type: "symbol",
