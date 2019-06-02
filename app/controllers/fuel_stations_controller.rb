@@ -14,7 +14,7 @@ class FuelStationsController < ApplicationController
     end
     page      = (params[:page] || 1).to_i
     per_page  = 50
-    @stations = @stations.paginate(page: page, per_page: per_page)
+    # @stations = @stations.paginate(page: page, per_page: per_page)
   
     respond_to do |format|
       format.html

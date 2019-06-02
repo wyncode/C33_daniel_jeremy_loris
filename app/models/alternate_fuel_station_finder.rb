@@ -5,7 +5,7 @@ class AlternateFuelStationFinder
     @origin       = get_coordinates(origin)
     @destination  = get_coordinates(destination)
   end
-
+ 
   def run
     response = HTTParty.get("http://router.project-osrm.org/route/v1/driving/#{origin['lng']},#{origin['lat']};#{destination['lng']},#{destination['lat']}?overview=full&geometries=geojson")
     points = JSON.parse(response.body)['routes'].first['geometry']['coordinates']

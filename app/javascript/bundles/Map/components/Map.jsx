@@ -1,54 +1,88 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import { parseGeoJson } from "./MapUtils";
 
 export default class Map extends Component {
   componentDidMount() {
-    mapboxgl.accessToken = this.props.mapbox_api_key
+    mapboxgl.accessToken = this.props.mapbox_api_key;
     const mapOptions = {
-      container:  this.mapContainer,
-      style:      `mapbox://styles/mapbox/streets-v9`,
-      center:     [0,0],
-      zoom:       12
-    }
+      container: this.mapContainer,
+      style: `mapbox://styles/mapbox/streets-v9`,
+      center: [0, 0],
+      zoom: 12
+    };
     const geolocationOptions = {
       enableHighAccuracy: true,
-      maximumAge        : 30000,
-      timeout           : 27000
-    }
+      maximumAge: 30000,
+      timeout: 27000
+    };
     navigator.geolocation.getCurrentPosition(
       position => {
         mapOptions.center = [
-                              position.coords.longitude,
-                              position.coords.latitude
-                            ]
-        this.createMap(mapOptions, geolocationOptions)
+          position.coords.longitude,
+          position.coords.latitude
+        ];
+        this.createMap(mapOptions, geolocationOptions);
       },
       () => {
-        console.log("Geolocation failed")
-        this.createMap(mapOptions, geolocationOptions)
+        console.log("Geolocation failed");
+        this.createMap(mapOptions, geolocationOptions);
       },
       geolocationOptions
-    )
+    );
   }
 
   createMap = (mapOptions, geolocationOptions) => {
-    this.map = new mapboxgl.Map(mapOptions)
-    this.map.addControl(
+    this.map = new mapboxgl.Map(mapOptions);
+    const map = this.map;
+    map.addControl(
       new mapboxgl.GeolocateControl({
-        positionOptions:    geolocationOptions,
-        trackUserLocation:  true
+        positionOptions: geolocationOptions,
+        trackUserLocation: true
       })
-    )
-  }
+    );
+    const stations = parseGeoJson(this.props.stations);
+    map.on("load", _ => {
+      map.addSource("stations", { type: "geojson", data: stations });
+      map.addLayer({
+        id: "stations",
+        type: "symbol",
+        source: "stations",
+        layout: {
+          "icon-image": "restaurant-15",
+          "icon-size": 1.5,
+          "icon-allow-overlap": true
+        }
+      });
+      map.on("click", "stations", this.handleMarkerClick);
+    });
+  };
+
+  handleMarkerClick = e => {
+    const map = this.map;
+    const { properties = {}, geometry = {} } = e.features[0];
+    const { station_name, station_phone, street_address } = properties;
+    const coordinates = [...geometry.coordinates];
+    new mapboxgl.Popup()
+      .setLngLat(coordinates)
+      .setHTML(
+        `<div className="station-pop">
+        <p>${station_name}</p>
+        <p>${station_phone}</p>
+        <p>${street_address}</p>
+      </div>`
+      )
+      .addTo(map);
+  };
 
   render() {
     const style = {
-      width: '100%',
-      height: '500px',
-      backgroundColor: 'azure'
+      width: "100%",
+      height: "500px",
+      backgroundColor: "azure"
     };
-    return <div style={style} ref={el => this.mapContainer = el} />;
+    return <div style={style} ref={el => (this.mapContainer = el)} />;
   }
- 
+
   componentWillUnmount() {
     this.map.remove();
   }
