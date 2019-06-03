@@ -1,19 +1,30 @@
 class FuelStationsController < ApplicationController
   def index
-    if params[:origin].present? && params[:destination].present?
-      begin
-        @stations = AlternateFuelStationFinder.new(
-                      params[:origin], params[:destination]
-                    ).run
-      rescue StandardError => e
-        @stations = []
-        flash.now[:alert] = e.message
+    respond_to do |format|
+      format.html
+      format.json do
+        stations = AlternateFuelStationFinder.new(
+          {'lat' => params[:origin_lat], 'lng' => params[:origin_lng]},
+          {'lat' => params[:destination_lat], 'lng' => params[:destination_lng]}
+        ).run
+        render json:  {
+                        type: "FeatureCollection",
+                        features: stations.map do |station|
+                          {
+                            type: "Feature",
+                            geometry: {
+                              type: "Point",
+                              coordinates: [station["longitude"], station["latitude"]]
+                            },
+                            properties: {
+                              id: station["id"],
+                              name: station["station_name"],
+                              phone: station["station_phone"]
+                            }
+                          }
+                        end
+                      }
       end
-    else
-      @stations = []
     end
-    page      = (params[:page] || 1).to_i
-    per_page  = 50
-    @stations = @stations.paginate(page: page, per_page: per_page)
   end
 end
