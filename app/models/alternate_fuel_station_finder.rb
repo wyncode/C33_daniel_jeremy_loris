@@ -2,8 +2,8 @@ class AlternateFuelStationFinder
   attr_reader :origin, :destination
 
   def initialize(origin, destination)
-    @origin       = get_coordinates(origin)
-    @destination  = get_coordinates(destination)
+    @origin = origin
+    @destination = destination
   end
  
   def run
@@ -21,12 +21,5 @@ class AlternateFuelStationFinder
       }
     )
     JSON.parse(response.body)["fuel_stations"]
-  end
-
-  private
-
-  def get_coordinates(location)
-    response = HTTParty.get("https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=#{location}&inputtype=textquery&fields=geometry&key=#{ENV['GOOGLE_API_KEY']}")
-    JSON.parse(response.body)['candidates'].first['geometry']['location']
   end
 end
