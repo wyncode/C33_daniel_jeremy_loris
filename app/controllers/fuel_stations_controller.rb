@@ -19,6 +19,8 @@ class FuelStationsController < ApplicationController
                             properties: {
                               id: station["id"],
                               name: station["station_name"],
+                              address: station["street_address"],
+                              zip: station["zip"],
                               phone: station["station_phone"]
                             }
                           }

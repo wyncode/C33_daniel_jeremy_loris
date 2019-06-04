@@ -81,15 +81,17 @@ export default class Map extends Component {
 
   handleMarkerClick = e => {
     const { properties = {}, geometry = {} } = e.features[0]
-    const { name, phone } = properties
+    const { name, address, zip, phone } = properties
     const coordinates = [...geometry.coordinates]
+
     new mapboxgl.Popup()
       .setLngLat(coordinates)
       .setHTML(
-        `<div className="station-pop">
-          <p>${name}</p>
-          <p>${phone}</p>
-        </div>`
+        `<div className=“station-pop”>
+         <p>Name: ${name}</p>
+         <p>Address: ${address}, zip: ${zip}</p>
+         <p>Phone #: ${phone}</p>
+       </div>`
       ).addTo(this.map)
   }
 
