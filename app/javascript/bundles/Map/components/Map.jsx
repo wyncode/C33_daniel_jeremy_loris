@@ -2,6 +2,11 @@ import React, { Component } from "react"
 import axios from "axios"
 
 export default class Map extends Component {
+  state = {
+    make:   '',
+    model:  { model: '', range:  58 }
+  }
+
   componentDidMount() {
     mapboxgl.accessToken = this.props.mapbox_api_key
     const mapOptions = {
@@ -95,13 +100,57 @@ export default class Map extends Component {
       ).addTo(this.map)
   }
 
+  handleMakeChange = event => {
+    this.setState({ make: event.target.value, model: { model: '', range: 58 } })
+  }
+
+  handleModelChange = event => {
+    const model = this.props.models[this.state.make].find(model => model.model === event.target.value)
+    if(model){
+      this.setState({ model })
+    }else{
+      this.setState({model: { model: '', range:  58 }})
+    }
+  }
+
   render() {
     const style = {
       width: "100%",
       height: "500px",
       backgroundColor: "azure"
     }
-    return <div style={style} ref={el => (this.mapContainer = el)} />
+    return(
+      <React.Fragment>
+        {
+          this.state.model.model !== '' &&
+          <h1>Your {this.state.make} {this.state.model.model} can go {this.state.model.range} miles</h1>
+        }
+        <label htmlFor="make">Make</label>
+        <select id="make" value={this.state.make} onChange={this.handleMakeChange}>
+          <option value=''>Select</option>
+          {
+            this.props.makes.map(make => (
+              <option value={make} key={make}>{make}</option>
+            ))
+          }
+        </select>
+        {
+          this.state.make !== '' &&
+          <React.Fragment>
+            <label htmlFor="model">Model</label>
+            <select value={this.state.model.model} onChange={this.handleModelChange}>
+              <option value=''>Select</option>
+              {
+                this.props.models[this.state.make].map(model => (
+                  <option value={model.model} key={model.model}>{model.model}</option>
+                ))
+              }
+            </select>
+          </React.Fragment>
+        }
+        <div style={style} ref={el => (this.mapContainer = el)} />
+      </React.Fragment>
+    )
   }
 
   componentWillUnmount() {
