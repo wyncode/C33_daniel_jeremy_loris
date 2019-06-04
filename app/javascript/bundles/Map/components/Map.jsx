@@ -87,10 +87,10 @@ export default class Map extends Component {
     new mapboxgl.Popup()
       .setLngLat(coordinates)
       .setHTML(
-        `<div className=“station-pop”>
-         <p>Name: ${name}</p>
-         <p>Address: ${address}, zip: ${zip}</p>
-         <p>Phone #: ${phone}</p>
+        `<div className="station-pop">
+         <p>${name}</p>
+         <p>${address}, ${zip}</p>
+         ${phone && phone !== 'null' ? '<p>'+phone+'</p>' : '' }
        </div>`
       ).addTo(this.map)
   }
