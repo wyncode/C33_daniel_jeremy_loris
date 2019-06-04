@@ -1,7 +1,10 @@
 class FuelStationsController < ApplicationController
   def index
     respond_to do |format|
-      format.html
+      format.html do
+        @makes  = Vehicle.pluck(:make).uniq.sort
+        @models = Vehicle.all.group_by{ |vehicle| vehicle.make }
+      end
       format.json do
         stations = AlternateFuelStationFinder.new(
           {'lat' => params[:origin_lat], 'lng' => params[:origin_lng]},
