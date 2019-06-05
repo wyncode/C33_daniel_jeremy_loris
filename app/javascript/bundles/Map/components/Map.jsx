@@ -1,5 +1,6 @@
 import React, { Component } from "react"
 import axios from "axios"
+import '/stylesheets/map_component/dropdowns.css'
 
 export default class Map extends Component {
   state = {
@@ -126,7 +127,7 @@ export default class Map extends Component {
           <h1>Your {this.state.make} {this.state.model.model} can go {this.state.model.range} miles</h1>
         }
         <label htmlFor="make">Make</label>
-        <select id="make" value={this.state.make} onChange={this.handleMakeChange}>
+        <select id="make" className="vehicleSelector" value={this.state.make} onChange={this.handleMakeChange}>
           <option value=''>Select</option>
           {
             this.props.makes.map(make => (
@@ -138,7 +139,7 @@ export default class Map extends Component {
           this.state.make !== '' &&
           <React.Fragment>
             <label htmlFor="model">Model</label>
-            <select value={this.state.model.model} onChange={this.handleModelChange}>
+            <select id="model" className="vehicleSelector" value={this.state.model.model} onChange={this.handleModelChange}>
               <option value=''>Select</option>
               {
                 this.props.models[this.state.make].map(model => (
