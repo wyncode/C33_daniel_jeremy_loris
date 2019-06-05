@@ -1,10 +1,13 @@
 import React, { Component } from "react"
 import axios from "axios"
+import Switch from "react-switch"
 
 export default class Map extends Component {
   state = {
-    make:   '',
-    model:  { model: '', range:  58 }
+    make:                 '',
+    model:                { model: '', range:  58 },
+    instructionsVisible:  true,
+    switchVisible:        false
   }
 
   componentDidMount() {
@@ -33,6 +36,16 @@ export default class Map extends Component {
     )
   }
 
+  handleSwitchChange = event => {
+    if(this.state.instructionsVisible){
+      this.setState({instructionsVisible: false})
+      document.querySelector('.mapbox-directions-instructions').classList.add('instructions-hidden')
+    }else{
+      this.setState({instructionsVisible: true})
+      document.querySelector('.mapbox-directions-instructions').classList.remove('instructions-hidden')
+    }
+  }
+
   createMap = (mapOptions, geolocationOptions) => {
     this.map = new mapboxgl.Map(mapOptions)
     this.map.addControl(
@@ -51,6 +64,7 @@ export default class Map extends Component {
     })
     this.map.addControl(directions, 'top-left')
     directions.on("route", () => {
+      this.setState({ switchVisible: true })
       const originCoords = directions.getOrigin().geometry.coordinates
       const destinationCoords = directions.getDestination().geometry.coordinates
       if(this.map.getSource('stations')){
@@ -115,40 +129,50 @@ export default class Map extends Component {
 
   render() {
     const style = {
-      width: "100%",
-      height: "500px",
+      width: "100vw",
+      height: "100vh",
       backgroundColor: "azure"
     }
     return(
       <React.Fragment>
-        {
-          this.state.model.model !== '' &&
-          <h1>Your {this.state.make} {this.state.model.model} can go {this.state.model.range} miles</h1>
-        }
-        <label htmlFor="make">Make</label>
-        <select id="make" value={this.state.make} onChange={this.handleMakeChange}>
-          <option value=''>Select</option>
+        <div style={style} ref={el => (this.mapContainer = el)} >
           {
-            this.props.makes.map(make => (
-              <option value={make} key={make}>{make}</option>
-            ))
+            this.state.switchVisible &&
+            <Switch
+              onChange={this.handleSwitchChange}
+              checked={this.state.instructionsVisible}
+              className="instructionsToggle"
+              checkedIcon={false}
+              uncheckedIcon={false}
+              onColor='#3BB2D0'
+            />
           }
-        </select>
-        {
-          this.state.make !== '' &&
-          <React.Fragment>
-            <label htmlFor="model">Model</label>
-            <select value={this.state.model.model} onChange={this.handleModelChange}>
-              <option value=''>Select</option>
-              {
-                this.props.models[this.state.make].map(model => (
-                  <option value={model.model} key={model.model}>{model.model}</option>
-                ))
-              }
-            </select>
-          </React.Fragment>
-        }
-        <div style={style} ref={el => (this.mapContainer = el)} />
+          <div id="vehicle-selector">
+            <div>
+              <select id="make" value={this.state.make} onChange={this.handleMakeChange}>
+                <option value=''>Make</option>
+                {
+                  this.props.makes.map(make => (
+                    <option value={make} key={make}>{make}</option>
+                  ))
+                }
+              </select>
+            </div>
+            {
+              this.state.make !== '' &&
+              <div>
+                <select value={this.state.model.model} onChange={this.handleModelChange}>
+                  <option value=''>Model</option>
+                  {
+                    this.props.models[this.state.make].map(model => (
+                      <option value={model.model} key={model.model}>{model.model}</option>
+                    ))
+                  }
+                </select>
+              </div>
+            }
+          </div>
+        </div>
       </React.Fragment>
     )
   }
