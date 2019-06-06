@@ -96,6 +96,17 @@ export default class Map extends Component {
           console.log("API returned an error")
         })
     })
+    this.map.on("load", () => {
+      axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${mapOptions.center[0]},${mapOptions.center[1]}.json?access_token=${mapboxgl.accessToken}`)
+        .then(response => {
+          const origin = response.data.features[0]
+          if (origin){
+            directions.setOrigin(origin.place_name)
+          }else{
+            directions.setOrigin(mapOptions.center)
+          }
+        })
+    })
   }
 
   handleMarkerClick = e => {
