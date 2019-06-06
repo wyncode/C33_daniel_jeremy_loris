@@ -13,3 +13,20 @@
  *= require_tree .
  *= require_self
  */
+
+.mapboxgl-ctrl-icon {
+}
+
+.mapboxgl-ctrl-top-right .mapboxgl-ctrl {
+  padding-right: 530px;
+  padding-top: 5.4578px;
+}
+
+.mapboxgl-ctrl-group {
+  border-radius: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  overflow: none;
+  background: none;
+}
