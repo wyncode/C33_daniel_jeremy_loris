@@ -7,7 +7,9 @@ export default class Map extends Component {
     make:                 '',
     model:                { model: '', range:  58 },
     instructionsVisible:  true,
-    switchVisible:        false
+    switchVisible:        false,
+    originLat: Number(),
+    originLng: Number()
   }
 
   componentDidMount() {
@@ -46,6 +48,32 @@ export default class Map extends Component {
     }
   }
 
+  createGeoJSONCircle = (center, radiusInMiles, points) => {
+    if(!points) points = 64;
+    const coords = { latitude: center[1], longitude: center[0] };
+    const km = radiusInMiles * 1.60934;
+    const ret = [];
+    const distanceX = km/(111.320*Math.cos(coords.latitude*Math.PI/180));
+    const distanceY = km/110.574;
+    for(let i=0; i<points; i++) {
+        const theta = (i/points)*(2*Math.PI);
+        const x = distanceX*Math.cos(theta);
+        const y = distanceY*Math.sin(theta);
+        ret.push([coords.longitude+x, coords.latitude+y]);
+    }
+    ret.push(ret[0]);
+    return {
+            "type": "FeatureCollection",
+            "features": [{
+                "type": "Feature",
+                "geometry": {
+                    "type": "Polygon",
+                    "coordinates": [ret]
+                }
+            }]
+        }
+};
+
   createMap = (mapOptions, geolocationOptions) => {
     this.map = new mapboxgl.Map(mapOptions)
     this.map.addControl(
@@ -64,16 +92,35 @@ export default class Map extends Component {
     })
     this.map.addControl(directions, 'top-left')
     directions.on("route", () => {
-      this.setState({ switchVisible: true })
       const originCoords = directions.getOrigin().geometry.coordinates
       const destinationCoords = directions.getDestination().geometry.coordinates
+      const originLat = originCoords[1]
+      const originLng = originCoords[0]
+      this.setState({ originLng, originLat, switchVisible: true })
+      const data = this.createGeoJSONCircle([originLng, originLat], 58)
+      const rangeSource = this.map.getSource('range')
+      if (!rangeSource) {
+        this.map.addSource("range", { type: 'geojson', data })
+        this.map.addLayer({
+          "id": "range",
+          "type": "fill",
+          "source": "range",
+          "layout": {},
+          "paint": {
+              "fill-opacity": 1,
+              "fill-outline-color": "red",
+              "fill-color": "transparent",
+          }
+        });
+      }
+      else rangeSource.setData(data)
       if(this.map.getSource('stations')){
         this.map.getSource('stations').setData({
           type:     'FeatureCollection',
           features: []
         })
       }
-      axios.get(`/fuel_stations.json?origin_lng=${originCoords[0]}&origin_lat=${originCoords[1]}&destination_lng=${destinationCoords[0]}&destination_lat=${destinationCoords[1]}`)
+      axios.get(`/fuel_stations.json?origin_lng=${originLng}&origin_lat=${originLat}&destination_lng=${destinationCoords[0]}&destination_lat=${destinationCoords[1]}`)
         .then(response => {
           if(!this.map.getSource('stations')){
             this.map.addSource("stations", { type: "geojson", data: response.data })
@@ -132,6 +179,11 @@ export default class Map extends Component {
   handleModelChange = event => {
     const model = this.props.models[this.state.make].find(model => model.model === event.target.value)
     if(model){
+      const map = this.map
+      const { originLat, originLng } = this.state;
+      const rangeSource = map.getSource("range")
+      const data = this.createGeoJSONCircle([originLng, originLat], model.range)
+      rangeSource && rangeSource.setData(data)
       this.setState({ model })
     }else{
       this.setState({model: { model: '', range:  58 }})
