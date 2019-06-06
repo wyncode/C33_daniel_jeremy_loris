@@ -62,7 +62,6 @@ export default class Map extends Component {
         profileSwitcher: false
       }
     })
-
     this.map.addControl(directions, 'top-left')
     directions.on("route", () => {
       this.setState({ switchVisible: true })
