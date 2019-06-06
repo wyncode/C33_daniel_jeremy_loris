@@ -6,7 +6,7 @@ export default class Map extends Component {
   state = {
     make:                 '',
     model:                { model: '', range:  58 },
-    instructionsVisible:  true,
+    instructionsVisible:  false,
     switchVisible:        false,
     originLat:            0,
     originLng:            0
@@ -92,6 +92,11 @@ export default class Map extends Component {
     })
     this.map.addControl(directions, 'top-left')
     directions.on("route", () => {
+      document.querySelector('.mapbox-directions-instructions').classList.add('instructions-hidden')
+      document.querySelectorAll('.geocoder-icon-close').forEach(button => {
+        button.addEventListener('click', this.handleEndpointDelete)
+      })
+
       const [originLng, originLat] = directions.getOrigin().geometry.coordinates
       const [destinationLng, destinationLat] = directions.getDestination().geometry.coordinates
       this.setState({ originLng, originLat, switchVisible: true })
@@ -126,10 +131,7 @@ export default class Map extends Component {
         rangeSource.setData(data)
       }
       if(this.map.getSource('stations')){
-        this.map.getSource('stations').setData({
-          type:     'FeatureCollection',
-          features: []
-        })
+        this.unsetStations()
       }
       axios.get(`/fuel_stations.json?origin_lng=${originLng}&origin_lat=${originLat}&destination_lng=${destinationLng}&destination_lat=${destinationLat}`)
         .then(response => {
@@ -165,6 +167,18 @@ export default class Map extends Component {
           }
         })
     })
+  }
+
+  unsetStations = () => {
+    this.map.getSource('stations').setData({
+      type:     'FeatureCollection',
+      features: []
+    })
+  }
+
+  handleEndpointDelete = event => {
+    this.setState({ switchVisible: false })
+    this.unsetStations()
   }
 
   handleMarkerClick = e => {
