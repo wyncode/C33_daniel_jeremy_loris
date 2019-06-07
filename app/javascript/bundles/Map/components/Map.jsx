@@ -251,19 +251,16 @@ export default class Map extends Component {
                 }
               </select>
             </div>
-            {
-              this.state.make !== '' &&
-              <div>
-                <select value={this.state.model.model} onChange={this.handleModelChange}>
-                  <option value=''>Model</option>
-                  {
-                    this.props.models[this.state.make].map(model => (
-                      <option value={model.model} key={model.model}>{model.model}</option>
-                    ))
-                  }
-                </select>
-              </div>
-            }
+            <div>
+              <select value={this.state.model.model} onChange={this.handleModelChange}>
+                <option value=''>Model</option>
+                {
+                  (this.props.models[this.state.make] || []).map(model => (
+                    <option value={model.model} key={model.model}>{model.model}</option>
+                  ))
+                }
+              </select>
+            </div>
           </div>
         </div>
       </React.Fragment>
