@@ -1,142 +1,169 @@
-import React, { Component } from "react"
-import axios from "axios"
-import Switch from "react-switch"
+import React, { Component } from "react";
+import axios from "axios";
+import Switch from "react-switch";
 
 export default class Map extends Component {
   state = {
-    make:                 '',
-    model:                { model: '', range:  58 },
-    instructionsVisible:  false,
-    switchVisible:        false,
-    originLat:            0,
-    originLng:            0
-  }
+    make: "",
+    model: { model: "", range: 58 },
+    instructionsVisible: false,
+    switchVisible: false,
+    originLat: 0,
+    originLng: 0
+  };
 
   componentDidMount() {
-    mapboxgl.accessToken = this.props.mapbox_api_key
+    mapboxgl.accessToken = this.props.mapbox_api_key;
     const mapOptions = {
       container: this.mapContainer,
       style: `mapbox://styles/mapbox/streets-v9`,
       center: [this.state.originLng, this.state.originLat],
       zoom: 12
-    }
+    };
     const geolocationOptions = {
       enableHighAccuracy: true,
       maximumAge: 30000,
       timeout: 27000
-    }
+    };
     navigator.geolocation.getCurrentPosition(
       position => {
-        mapOptions.center = [position.coords.longitude, position.coords.latitude]
-        this.createMap(mapOptions, geolocationOptions)
+        mapOptions.center = [
+          position.coords.longitude,
+          position.coords.latitude
+        ];
+        this.createMap(mapOptions, geolocationOptions);
       },
       () => {
-        console.log("Geolocation failed")
-        this.createMap(mapOptions, geolocationOptions)
+        console.log("Geolocation failed");
+        this.createMap(mapOptions, geolocationOptions);
       },
       geolocationOptions
-    )
+    );
   }
 
   handleSwitchChange = event => {
-    if(this.state.instructionsVisible){
-      this.setState({instructionsVisible: false})
-      document.querySelector('.mapbox-directions-instructions').classList.add('instructions-hidden')
-    }else{
-      this.setState({instructionsVisible: true})
-      document.querySelector('.mapbox-directions-instructions').classList.remove('instructions-hidden')
+    if (this.state.instructionsVisible) {
+      this.setState({ instructionsVisible: false });
+      document
+        .querySelector(".mapbox-directions-instructions")
+        .classList.add("instructions-hidden");
+    } else {
+      this.setState({ instructionsVisible: true });
+      document
+        .querySelector(".mapbox-directions-instructions")
+        .classList.remove("instructions-hidden");
     }
-  }
+  };
 
   createGeoJSONCircle = (center, radiusInMiles) => {
-    const points = 64
-    const coords = { latitude: center[1], longitude: center[0] }
-    const km = radiusInMiles * 1.60934
-    const ret = []
-    const distanceX = km/(111.320*Math.cos(coords.latitude*Math.PI/180))
-    const distanceY = km/110.574
-    for(let i=0; i<points; i++) {
-      const theta = (i/points)*(2*Math.PI)
-      const x = distanceX*Math.cos(theta)
-      const y = distanceY*Math.sin(theta)
-      ret.push([coords.longitude+x, coords.latitude+y])
+    const points = 64;
+    const coords = { latitude: center[1], longitude: center[0] };
+    const km = radiusInMiles * 1.60934;
+    const ret = [];
+    const distanceX =
+      km / (111.32 * Math.cos((coords.latitude * Math.PI) / 180));
+    const distanceY = km / 110.574;
+    for (let i = 0; i < points; i++) {
+      const theta = (i / points) * (2 * Math.PI);
+      const x = distanceX * Math.cos(theta);
+      const y = distanceY * Math.sin(theta);
+      ret.push([coords.longitude + x, coords.latitude + y]);
     }
-    ret.push(ret[0])
-    return  {
-              "type": "FeatureCollection",
-              "features": [{
-                "type": "Feature",
-                "geometry": {
-                  "type": "Polygon",
-                  "coordinates": [ret]
-                }
-              }]
-            }
-  }
+    ret.push(ret[0]);
+    return {
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          geometry: {
+            type: "Polygon",
+            coordinates: [ret]
+          }
+        }
+      ]
+    };
+  };
 
   createMap = (mapOptions, geolocationOptions) => {
-    this.map = new mapboxgl.Map(mapOptions)
+    this.map = new mapboxgl.Map(mapOptions);
     this.map.addControl(
       new mapboxgl.GeolocateControl({
         positionOptions: geolocationOptions,
         trackUserLocation: true
       })
-    )
+    );
     const directions = new MapboxDirections({
       accessToken: mapboxgl.accessToken,
-      profile: 'mapbox/driving',
+      profile: "mapbox/driving",
       interactive: false,
       controls: {
         profileSwitcher: false
       }
-    })
-    this.map.addControl(directions, 'top-left')
+    });
+    this.map.addControl(directions, "top-left");
     directions.on("route", () => {
-      document.querySelector('.mapbox-directions-instructions').classList.add('instructions-hidden')
-      document.querySelectorAll('.geocoder-icon-close').forEach(button => {
-        button.addEventListener('click', this.handleEndpointDelete)
-      })
+      document
+        .querySelector(".mapbox-directions-instructions")
+        .classList.add("instructions-hidden");
+      document.querySelectorAll(".geocoder-icon-close").forEach(button => {
+        button.addEventListener("click", this.handleEndpointDelete);
+      });
 
-      const [originLng, originLat] = directions.getOrigin().geometry.coordinates
-      const [destinationLng, destinationLat] = directions.getDestination().geometry.coordinates
-      this.setState({ originLng, originLat, switchVisible: true })
-      const data = this.createGeoJSONCircle([originLng, originLat], this.state.model.range)
-      const rangeSource = this.map.getSource('range')
+      const [
+        originLng,
+        originLat
+      ] = directions.getOrigin().geometry.coordinates;
+      const [
+        destinationLng,
+        destinationLat
+      ] = directions.getDestination().geometry.coordinates;
+      this.setState({ originLng, originLat, switchVisible: true });
+      const data = this.createGeoJSONCircle(
+        [originLng, originLat],
+        this.state.model.range
+      );
+      const rangeSource = this.map.getSource("range");
       if (!rangeSource) {
-        this.map.addSource("range", { type: 'geojson', data })
+        this.map.addSource("range", { type: "geojson", data });
         this.map.addLayer({
-          "id": "range",
-          "type": "fill",
-          "source": "range",
-          "layout": {},
-          "paint": {
-              "fill-opacity": 0.10,
-              "fill-color": "#3BB2D0",
+          id: "range",
+          type: "fill",
+          source: "range",
+          layout: {},
+          paint: {
+            "fill-opacity": 0.1,
+            "fill-color": "#3BB2D0"
           }
-        })
+        });
         this.map.addLayer({
-          "id": "range-line",
-          "type": "line",
-          "source": "range",
-          "layout": {
+          id: "range-line",
+          type: "line",
+          source: "range",
+          layout: {
             "line-join": "round",
             "line-cap": "round"
-            },
-          "paint": {
+          },
+          paint: {
             "line-color": "#3BB2D0",
             "line-width": 4
           }
-        })
+        });
       } else {
-        rangeSource.setData(data)
+        rangeSource.setData(data);
       }
-      if(this.map.getSource('stations')){
-        this.unsetStations()
+      if (this.map.getSource("stations")) {
+        this.unsetStations();
       }
-      axios.get(`/fuel_stations.json?origin_lng=${originLng}&origin_lat=${originLat}&destination_lng=${destinationLng}&destination_lat=${destinationLat}`)
+      axios
+        .get(
+          `/fuel_stations.json?origin_lng=${originLng}&origin_lat=${originLat}&destination_lng=${destinationLng}&destination_lat=${destinationLat}`
+        )
         .then(response => {
-          if(!this.map.getSource('stations')){
-            this.map.addSource("stations", { type: "geojson", data: response.data })
+          if (!this.map.getSource("stations")) {
+            this.map.addSource("stations", {
+              type: "geojson",
+              data: response.data
+            });
             this.map.addLayer({
               id: "stations",
               type: "symbol",
@@ -146,45 +173,50 @@ export default class Map extends Component {
                 "icon-size": 1.5,
                 "icon-allow-overlap": false
               }
-            })
-            this.map.on("click", "stations", this.handleMarkerClick)
-          }else{
-            this.map.getSource('stations').setData(response.data)
+            });
+            this.map.on("click", "stations", this.handleMarkerClick);
+          } else {
+            this.map.getSource("stations").setData(response.data);
           }
         })
         .catch(error => {
-          console.log("API returned an error")
-        })
-    })
+          console.log("API returned an error");
+        });
+    });
     this.map.on("load", () => {
-      axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${mapOptions.center[0]},${mapOptions.center[1]}.json?access_token=${mapboxgl.accessToken}`)
+      axios
+        .get(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${
+            mapOptions.center[0]
+          },${mapOptions.center[1]}.json?access_token=${mapboxgl.accessToken}`
+        )
         .then(response => {
-          const origin = response.data.features[0]
-          if (origin){
-            directions.setOrigin(origin.place_name)
-          }else{
-            directions.setOrigin(mapOptions.center)
+          const origin = response.data.features[0];
+          if (origin) {
+            directions.setOrigin(origin.place_name);
+          } else {
+            directions.setOrigin(mapOptions.center);
           }
-        })
-    })
-  }
+        });
+    });
+  };
 
   unsetStations = () => {
-    this.map.getSource('stations').setData({
-      type:     'FeatureCollection',
+    this.map.getSource("stations").setData({
+      type: "FeatureCollection",
       features: []
-    })
-  }
+    });
+  };
 
   handleEndpointDelete = event => {
-    this.setState({ switchVisible: false })
-    this.unsetStations()
-  }
+    this.setState({ switchVisible: false });
+    this.unsetStations();
+  };
 
   handleMarkerClick = e => {
-    const { properties = {}, geometry = {} } = e.features[0]
-    const { name, address, zip, phone } = properties
-    const coordinates = [...geometry.coordinates]
+    const { properties = {}, geometry = {} } = e.features[0];
+    const { name, address, zip, phone } = properties;
+    const coordinates = [...geometry.coordinates];
 
     new mapboxgl.Popup()
       .setLngLat(coordinates)
@@ -192,85 +224,146 @@ export default class Map extends Component {
         `<div className="station-pop">
          <p>${name}</p>
          <p>${address}, ${zip}</p>
-         ${phone && phone !== 'null' ? '<p>'+phone+'</p>' : '' }
+         ${phone && phone !== "null" ? "<p>" + phone + "</p>" : ""}
        </div>`
-      ).addTo(this.map)
-  }
+      )
+      .addTo(this.map);
+  };
 
   handleMakeChange = event => {
-    const model = { model: '', range: 58 }
-    this.setState({ make: event.target.value, model })
-    this.resetCircle(model)
-  }
+    const model = { model: "", range: 58 };
+    this.setState({ make: event.target.value, model });
+    this.resetCircle(model);
+  };
 
-  resetCircle = (model) => {
-    const map = this.map
+  resetCircle = model => {
+    const map = this.map;
     const { originLat, originLng } = this.state;
-    const rangeSource = map.getSource("range")
-    const data = this.createGeoJSONCircle([originLng, originLat], model.range)
-    rangeSource.setData(data)
-  }
+    const rangeSource = map.getSource("range");
+    const data = this.createGeoJSONCircle([originLng, originLat], model.range);
+    rangeSource.setData(data);
+  };
 
   handleModelChange = event => {
-    let model = this.props.models[this.state.make].find(model => model.model === event.target.value)
-    if(!model){
-      model = { model: '', range:  58 }
+    let model = this.props.models[this.state.make].find(
+      model => model.model === event.target.value
+    );
+    if (!model) {
+      model = { model: "", range: 58 };
     }
-    this.setState({ model })
-    this.resetCircle(model)
-  }
+    this.setState({ model });
+    this.resetCircle(model);
+  };
 
   render() {
     const style = {
       width: "100vw",
       height: "100vh",
       backgroundColor: "azure"
-    }
-    return(
+    };
+    return (
       <React.Fragment>
-        <div style={style} ref={el => (this.mapContainer = el)} >
-          {
-            this.state.switchVisible &&
+        <div style={style} ref={el => (this.mapContainer = el)}>
+          {this.state.switchVisible && (
             <Switch
               onChange={this.handleSwitchChange}
               checked={this.state.instructionsVisible}
               className="instructionsToggle"
               checkedIcon={false}
               uncheckedIcon={false}
-              onColor='#3BB2D0'
+              onColor="#3BB2D0"
             />
-          }
+          )}
           <div id="vehicle-selector">
             <div>
-              <select id="make" value={this.state.make} onChange={this.handleMakeChange}>
-                <option value=''>Make</option>
-                {
-                  this.props.makes.map(make => (
-                    <option value={make} key={make}>{make}</option>
-                  ))
-                }
+              <select
+                id="make"
+                value={this.state.make}
+                onChange={this.handleMakeChange}
+              >
+                <option value="">Make</option>
+                {this.props.makes.map(make => (
+                  <option value={make} key={make}>
+                    {make}
+                  </option>
+                ))}
               </select>
             </div>
-            {
-              this.state.make !== '' &&
+            {this.state.make !== "" && (
               <div>
-                <select value={this.state.model.model} onChange={this.handleModelChange}>
-                  <option value=''>Model</option>
-                  {
-                    this.props.models[this.state.make].map(model => (
-                      <option value={model.model} key={model.model}>{model.model}</option>
-                    ))
-                  }
+                <select
+                  value={this.state.model.model}
+                  onChange={this.handleModelChange}
+                >
+                  <option value="">Model</option>
+                  {this.props.models[this.state.make].map(model => (
+                    <option value={model.model} key={model.model}>
+                      {model.model}
+                    </option>
+                  ))}
                 </select>
               </div>
-            }
+            )}
+          </div>
+          <div className="logo-div">
+            <button
+              id="modalButton"
+              type="button"
+              className="btn btn-primary"
+              data-toggle="modal"
+              data-target="#exampleModalLong"
+            >
+              Launch demo modal
+            </button>
+
+            <div
+              className="modal"
+              id="exampleModalLong"
+              tabIndex="-1"
+              role="dialog"
+              aria-labelledby="exampleModalLongTitle"
+              aria-hidden="true"
+            >
+              <div className="modal-dialog text-center" role="document">
+                <div className="modal-content text-center">
+                  <div className="modal-header text-center">
+                    <h5
+                      className="text-center modal-title"
+                      id="exampleModalLongTitle"
+                    >
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChargR
+                    </h5>
+                    <button
+                      type="button"
+                      className="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div className="modal-body">Meet The Developers</div>
+                  <div className="modal-footer">
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      data-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </React.Fragment>
-    )
+    );
   }
 
   componentWillUnmount() {
-    this.map.remove()
+    this.map.remove();
   }
 }
