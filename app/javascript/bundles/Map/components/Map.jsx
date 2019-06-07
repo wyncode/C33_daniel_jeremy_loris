@@ -82,12 +82,12 @@ export default class Map extends Component {
     }else{
       this.directions.setWaypoint(0, [lng,lat])
     }
-    document.querySelector('.mapboxgl-popup-close-button').click()
+    this.map.flyTo({ center: [lng, lat], zoom: 12 })
   }
 
   chargeUp = (lng, lat) => {
-    console.log("I charged up!")
-    console.log({lng, lat})
+    this.setCircle(lat, lng, this.state.model)
+    document.querySelector('.mapboxgl-popup-close-button').click()
   }
 
   setOriginToCurrentLocation = (lng, lat) => {
@@ -122,8 +122,8 @@ export default class Map extends Component {
     this.map.on("load", () => {
       this.setOriginToCurrentLocation(...mapOptions.center)
       this.directions.on("route", () => {
+        this.setState({ instructionsVisible: true })
         if(!this.state.waypointJustAdded){
-          document.querySelector('.mapbox-directions-instructions').classList.add('instructions-hidden')
           document.querySelectorAll('.geocoder-icon-close').forEach(button => {
             button.addEventListener('click', this.handleEndpointDelete)
           })
@@ -191,10 +191,10 @@ export default class Map extends Component {
           <p>${address}, ${zip}</p>
           ${phone && phone !== 'null' ? '<p>'+phone+'</p>' : '' }
           <button onclick="window.map.addWaypoint(${coordinates[0]}, ${coordinates[1]})">
-            Add Waypoint
+            Set Waypoint
           </button>
           <button onclick="window.map.chargeUp(${coordinates[0]}, ${coordinates[1]})">
-            I Charged Up
+            Reset Range
           </button>
        </div>`
       ).addTo(this.map)
@@ -237,6 +237,7 @@ export default class Map extends Component {
     } else {
       rangeSource.setData(data)
     }
+    this.setState({originLat, originLng, model})
   }
 
   handleModelChange = event => {
