@@ -1,32 +1,40 @@
-.instructions-hidden{
+.instructions-hidden {
   visibility: hidden;
   opacity: 0;
-  display: none
+  display: none;
 }
 
-.instructionsToggle{
+.instructionsToggle {
   position: absolute !important;
   top: 102px;
   left: 251px;
   z-index: 10;
 }
 
-body{
+body {
   margin: 0;
 }
 
-#vehicle-selector{
+#vehicle-selector {
   z-index: 10;
   position: absolute;
   bottom: 10px;
   left: 10px;
 }
 
-select{
+#make {
+  background-color: #3bb2d0;
+  color: whitesmoke;
+}
+#model {
+  background-color: #8a8acb;
+  color: whitesmoke;
+}
+
+select {
   padding: 10px;
   background-color: white;
   width: 300px;
-  font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
   font-size: 12px;
 }
-
