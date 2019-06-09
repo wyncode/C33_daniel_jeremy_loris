@@ -1,0 +1,23 @@
+#vehicle-selector {
+  z-index: 10;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+#make {
+  background-color: #3bb2d0;
+  color: whitesmoke;
+}
+#model {
+  background-color: #8a8acb;
+  color: whitesmoke;
+}
+
+select {
+  padding: 10px;
+  background-color: white;
+  width: 300px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 12px;
+}
