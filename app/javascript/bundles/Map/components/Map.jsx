@@ -305,16 +305,17 @@ export default class Map extends Component {
               </div>
             )}
           </div>
-          <div className="logo-div">
-            <button
+          <div id="logo-div">
+            <a
               id="modalButton"
-              type="button"
-              className="btn btn-primary"
               data-toggle="modal"
               data-target="#exampleModalLong"
             >
-              Launch demo modal
-            </button>
+              <img
+                style={{ width: "100px", height: "100px" }}
+                src={require("./chargR.png")}
+              />
+            </a>
 
             <div
               className="modal"
@@ -331,9 +332,7 @@ export default class Map extends Component {
                       className="text-center modal-title"
                       id="exampleModalLongTitle"
                     >
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ChargR
+                      About Us
                     </h5>
                     <button
                       type="button"
@@ -344,9 +343,15 @@ export default class Map extends Component {
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>
-                  <div className="modal-body">Meet The Developers</div>
+                  <div className="modal-body">
+                    With chargR,
+                    <br /> you will find multiple ways to plan your trip
+                    strategically, and fearlessly, while supporting an Eco
+                    friendly enviournment.
+                  </div>
                   <div className="modal-footer">
                     <button
+                      id="btncolor"
                       type="button"
                       className="btn btn-secondary"
                       data-dismiss="modal"

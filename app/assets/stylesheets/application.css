@@ -13,15 +13,3 @@
  *= require_tree .
  *= require_self
  */
-
-.logo-div {
-  /* margin-top: 30rem; */
-  position: fixed;
-
-  z-index: 10;
-  margin-top: 46rem;
-}
-
-.hide-modal {
-  display: none !important;
-}
