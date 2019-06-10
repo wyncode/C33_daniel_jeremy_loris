@@ -1,17 +1,17 @@
-.instructions-hidden {
+.instructions-hidden{
   visibility: hidden;
   opacity: 0;
   display: none;
 }
 
-.instructionsToggle {
+.instructionsToggle{
   position: absolute !important;
   top: 102px;
   left: 251px;
   z-index: 10;
 }
 
-body {
+body{
   margin: 0;
 }
 
@@ -30,31 +30,31 @@ select{
   font-size: 12px;
 }
 
-#logo-div {
+#logo-div{
   position: absolute;
   z-index: 10;
   bottom: 10px;
   right: 10px;
 }
 
-.hide-modal {
+.hide-modal{
   display: none !important;
 }
 
-#btncolor {
+#btncolor{
   background-color: black;
   color: rgb(252, 248, 2);
   font-family: "Sarpanch", sans-serif;
 }
 
-.text-center {
+.text-center{
   background-color: black;
   color: rgb(252, 248, 2);
   font-size: 20px;
   font-family: "Sarpanch", sans-serif;
 }
 
-.modal-body {
+.modal-body{
   font-family: "Sarpanch", sans-serif;
   color: rgb(252, 248, 2);
 }

@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import axios from "axios";
-import Switch from "react-switch";
+import React, { Component } from "react"
+import axios from "axios"
+import Switch from "react-switch"
 
-export default class Map extends Component {
+export default class Map extends Component{
   constructor(props){
     super(props)
     window.map = this
@@ -17,33 +17,33 @@ export default class Map extends Component {
     originLng:            0
   }
 
-  componentDidMount() {
-    mapboxgl.accessToken = this.props.mapbox_api_key;
+  componentDidMount(){
+    mapboxgl.accessToken = this.props.mapbox_api_key
     const mapOptions = {
       container: this.mapContainer,
       style: `mapbox://styles/mapbox/streets-v9`,
       center: [this.state.originLng, this.state.originLat],
       zoom: 12
-    };
+    }
     const geolocationOptions = {
       enableHighAccuracy: true,
       maximumAge: 30000,
       timeout: 27000
-    };
+    }
     navigator.geolocation.getCurrentPosition(
       position => {
         mapOptions.center = [
           position.coords.longitude,
           position.coords.latitude
-        ];
-        this.createMap(mapOptions, geolocationOptions);
+        ]
+        this.createMap(mapOptions, geolocationOptions)
       },
       () => {
-        console.log("Geolocation failed");
-        this.createMap(mapOptions, geolocationOptions);
+        console.log("Geolocation failed")
+        this.createMap(mapOptions, geolocationOptions)
       },
       geolocationOptions
-    );
+    )
   }
 
   handleSwitchChange = event => {
@@ -52,20 +52,20 @@ export default class Map extends Component {
   }
 
   createGeoJSONCircle = (center, radiusInMiles) => {
-    const points = 64;
-    const coords = { latitude: center[1], longitude: center[0] };
-    const km = radiusInMiles * 1.60934;
-    const ret = [];
+    const points = 64
+    const coords = { latitude: center[1], longitude: center[0] }
+    const km = radiusInMiles * 1.60934
+    const ret = []
     const distanceX =
-      km / (111.32 * Math.cos((coords.latitude * Math.PI) / 180));
-    const distanceY = km / 110.574;
+      km / (111.32 * Math.cos((coords.latitude * Math.PI) / 180))
+    const distanceY = km / 110.574
     for (let i = 0; i < points; i++) {
       const theta = (i / points) * (2 * Math.PI);
-      const x = distanceX * Math.cos(theta);
-      const y = distanceY * Math.sin(theta);
-      ret.push([coords.longitude + x, coords.latitude + y]);
+      const x = distanceX * Math.cos(theta)
+      const y = distanceY * Math.sin(theta)
+      ret.push([coords.longitude + x, coords.latitude + y])
     }
-    ret.push(ret[0]);
+    ret.push(ret[0])
     return {
       type: "FeatureCollection",
       features: [
@@ -109,7 +109,7 @@ export default class Map extends Component {
   }
 
   createMap = (mapOptions, geolocationOptions) => {
-    this.map = new mapboxgl.Map(mapOptions);
+    this.map = new mapboxgl.Map(mapOptions)
     this.map.addControl(
       new mapboxgl.GeolocateControl({
         positionOptions: geolocationOptions,
@@ -185,9 +185,9 @@ export default class Map extends Component {
   }
 
   handleMarkerClick = e => {
-    const { properties = {}, geometry = {} } = e.features[0];
-    const { name, address, zip, phone } = properties;
-    const coordinates = [...geometry.coordinates];
+    const { properties = {}, geometry = {} } = e.features[0]
+    const { name, address, zip, phone } = properties
+    const coordinates = [...geometry.coordinates]
 
     new mapboxgl.Popup()
       .setLngLat(coordinates)
@@ -204,8 +204,8 @@ export default class Map extends Component {
           </button>
        </div>`
       )
-      .addTo(this.map);
-  };
+      .addTo(this.map)
+  }
 
   handleMakeChange = event => {
     const model = { model: '', range: 58 }
@@ -250,9 +250,9 @@ export default class Map extends Component {
   handleModelChange = event => {
     let model = this.props.models[this.state.make].find(
       model => model.model === event.target.value
-    );
+    )
     if (!model) {
-      model = { model: "", range: 58 };
+      model = { model: "", range: 58 }
     }
     this.setState({ model })
     this.setCircle(this.state.originLat, this.state.originLng, model)
@@ -263,8 +263,8 @@ export default class Map extends Component {
       width: "100vw",
       height: "100vh",
       backgroundColor: "azure"
-    };
-    return (
+    }
+    return(
       <React.Fragment>
         <div style={style} ref={el => (this.mapContainer = el)}>
           {this.state.switchVisible && (
@@ -373,6 +373,6 @@ export default class Map extends Component {
   }
 
   componentWillUnmount() {
-    this.map.remove();
+    this.map.remove()
   }
 }
