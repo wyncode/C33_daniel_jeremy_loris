@@ -1,5 +1,4 @@
 window.onload = () => {
-  console.log("working");
   const modalButton = document.querySelector("#modalButton");
   modalButton.addEventListener("click", () => {
     setTimeout(function() {
