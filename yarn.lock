@@ -3978,6 +3978,11 @@ make-dir@^2.0.0:
     pify "^4.0.1"
     semver "^5.6.0"
 
+maki@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/maki/-/maki-2.1.0.tgz#ef9f2b17508293102a7a8e4667d0d27cd89b55ce"
+  integrity sha1-758rF1CCkxAqeo5GZ9DSfNibVc4=
+
 mamacro@^0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/mamacro/-/mamacro-0.0.3.tgz#ad2c9576197c9f1abf308d0787865bd975a3f3e4"
