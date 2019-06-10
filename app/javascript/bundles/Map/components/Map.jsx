@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import axios from "axios"
 import Switch from "react-switch"
 import StationIcon from './images/charger1.png'
+import Div100vh from 'react-div-100vh'
 
 export default class Map extends Component {
   constructor(props){
@@ -165,11 +166,6 @@ export default class Map extends Component {
         }
       })
     })
-    window.onresize = function() {
-      document.body.height = window.innerHeight
-      document.getElementById('map').style.height = window.innerHeight
-    }
-    window.onresize()
   }
 
   unsetStations = () => {
@@ -261,12 +257,12 @@ export default class Map extends Component {
 
   render() {
     const style = {
-      width: "100%",
-      height: "100vh",
+      width: "100vw",
+      height: "100%",
       backgroundColor: "azure"
     }
     return(
-      <React.Fragment>
+      <Div100vh>
         <div id="map" style={style} ref={el => (this.mapContainer = el)} >
           {
             this.state.switchVisible &&
@@ -305,7 +301,7 @@ export default class Map extends Component {
             <img src={require("./images/chargR.png")}/>
           </div>
         </div>
-      </React.Fragment>
+      </Div100vh>
     )
   }
 
