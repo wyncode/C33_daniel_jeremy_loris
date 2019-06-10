@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import axios from "axios"
 import Switch from "react-switch"
 import StationIcon from './images/charger1.png'
+import Div100vh from 'react-div-100vh'
 
 export default class Map extends Component {
   constructor(props){
@@ -15,8 +16,7 @@ export default class Map extends Component {
     instructionsVisible:  true,
     switchVisible:        false,
     originLat:            0,
-    originLng:            0,
-    modalOpen:            false
+    originLng:            0
   }
 
   componentDidMount() {
@@ -122,9 +122,9 @@ export default class Map extends Component {
     })
     this.map.addControl(this.directions, 'top-left')
     this.map.on("load", () => {
-        this.map.loadImage(StationIcon, (error, icon) => {
-          if (error) return
-          this.map.addImage('station', icon)
+      this.map.loadImage(StationIcon, (error, icon) => {
+        if (error) return
+        this.map.addImage('station', icon)
       })
       this.setOriginToCurrentLocation(...mapOptions.center)
       this.directions.on("route", () => {
@@ -165,7 +165,6 @@ export default class Map extends Component {
         }
       })
     })
-
   }
 
   unsetStations = () => {
@@ -258,12 +257,12 @@ export default class Map extends Component {
   render() {
     const style = {
       width: "100vw",
-      height: "100vh",
+      height: "100%",
       backgroundColor: "azure"
     }
     return(
-      <React.Fragment>
-        <div style={style} ref={el => (this.mapContainer = el)} >
+      <Div100vh>
+        <div id="map" style={style} ref={el => (this.mapContainer = el)} >
           {
             this.state.switchVisible &&
             <Switch
@@ -301,7 +300,7 @@ export default class Map extends Component {
             <img src={require("./images/chargR.png")}/>
           </div>
         </div>
-      </React.Fragment>
+      </Div100vh>
     )
   }
 
