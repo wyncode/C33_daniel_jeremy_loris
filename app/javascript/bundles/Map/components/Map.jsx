@@ -286,7 +286,7 @@ export default class Map extends Component {
               </select>
             </div>
             <div>
-              <select value={this.state.model.model} onChange={this.handleModelChange}>
+              <select id="model" value={this.state.model.model} onChange={this.handleModelChange}>
                 <option value=''>Model</option>
                 {
                   (this.props.models[this.state.make] || []).map(model => (
