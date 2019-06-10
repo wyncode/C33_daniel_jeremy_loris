@@ -15,7 +15,8 @@ export default class Map extends Component {
     instructionsVisible:  true,
     switchVisible:        false,
     originLat:            0,
-    originLng:            0
+    originLng:            0,
+    modalOpen:            false
   }
 
   componentDidMount() {
@@ -295,6 +296,9 @@ export default class Map extends Component {
                 }
               </select>
             </div>
+          </div>
+          <div id="logo-div">
+            <img src={require("./images/chargR.png")}/>
           </div>
         </div>
       </React.Fragment>
