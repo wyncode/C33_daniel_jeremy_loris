@@ -16,8 +16,7 @@ export default class Map extends Component {
     instructionsVisible:  true,
     switchVisible:        false,
     originLat:            0,
-    originLng:            0,
-    modalOpen:            false
+    originLng:            0
   }
 
   componentDidMount() {
