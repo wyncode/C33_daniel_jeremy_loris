@@ -122,9 +122,9 @@ export default class Map extends Component {
     })
     this.map.addControl(this.directions, 'top-left')
     this.map.on("load", () => {
-        this.map.loadImage(StationIcon, (error, icon) => {
-          if (error) return
-          this.map.addImage('station', icon)
+      this.map.loadImage(StationIcon, (error, icon) => {
+        if (error) return
+        this.map.addImage('station', icon)
       })
       this.setOriginToCurrentLocation(...mapOptions.center)
       this.directions.on("route", () => {
@@ -165,7 +165,11 @@ export default class Map extends Component {
         }
       })
     })
-
+    window.onresize = function() {
+      document.body.height = window.innerHeight
+      document.getElementById('map').style.height = window.innerHeight
+    }
+    window.onresize()
   }
 
   unsetStations = () => {
@@ -257,13 +261,13 @@ export default class Map extends Component {
 
   render() {
     const style = {
-      width: "100vw",
+      width: "100%",
       height: "100vh",
       backgroundColor: "azure"
     }
     return(
       <React.Fragment>
-        <div style={style} ref={el => (this.mapContainer = el)} >
+        <div id="map" style={style} ref={el => (this.mapContainer = el)} >
           {
             this.state.switchVisible &&
             <Switch
