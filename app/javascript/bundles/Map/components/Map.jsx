@@ -121,12 +121,9 @@ export default class Map extends Component {
     })
     this.map.addControl(this.directions, 'top-left')
     this.map.on("load", () => {
-      console.log(StationIcon)
         this.map.loadImage(StationIcon, (error, icon) => {
-          console.log("Hello")
-          if (error) return;
-        console.log(icon)
-        this.map.addImage('station', icon)
+          if (error) return
+          this.map.addImage('station', icon)
       })
       this.setOriginToCurrentLocation(...mapOptions.center)
       this.directions.on("route", () => {
