@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import axios from "axios"
 import Switch from "react-switch"
+import StationIcon from './images/charger1.png'
 
 export default class Map extends Component {
   constructor(props){
@@ -120,6 +121,10 @@ export default class Map extends Component {
     })
     this.map.addControl(this.directions, 'top-left')
     this.map.on("load", () => {
+        this.map.loadImage(StationIcon, (error, icon) => {
+          if (error) return
+          this.map.addImage('station', icon)
+      })
       this.setOriginToCurrentLocation(...mapOptions.center)
       this.directions.on("route", () => {
         this.setState({ instructionsVisible: true })
@@ -141,7 +146,7 @@ export default class Map extends Component {
                   type: "symbol",
                   source: "stations",
                   layout: {
-                    "icon-image": "fuel-15",
+                    "icon-image": "station",
                     "icon-size": 1.5,
                     "icon-allow-overlap": false
                   }
