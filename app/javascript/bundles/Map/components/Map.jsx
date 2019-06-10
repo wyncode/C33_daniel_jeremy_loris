@@ -1,7 +1,7 @@
 import React, { Component } from "react"
 import axios from "axios"
 import Switch from "react-switch"
-import StationIcon from './images/chargingStationIcon.svg'
+import StationIcon from './images/charger1.png'
 
 export default class Map extends Component {
   constructor(props){
@@ -111,12 +111,6 @@ export default class Map extends Component {
         trackUserLocation: true
       })
     )
-    // map.on('load', _ => {
-      // map.loadImage(StationIcon, (error, icon) => {
-      //   if (error) return;
-      //   map.addImage('station', icon)
-      // })
-    // })
     this.directions = new MapboxDirections({
       accessToken: mapboxgl.accessToken,
       profile: 'mapbox/driving',
@@ -127,9 +121,12 @@ export default class Map extends Component {
     })
     this.map.addControl(this.directions, 'top-left')
     this.map.on("load", () => {
-        map.loadImage(StationIcon, (error, icon) => {
-        if (error) return;
-        map.addImage('station', icon)
+      console.log(StationIcon)
+        this.map.loadImage(StationIcon, (error, icon) => {
+          console.log("Hello")
+          if (error) return;
+        console.log(icon)
+        this.map.addImage('station', icon)
       })
       this.setOriginToCurrentLocation(...mapOptions.center)
       this.directions.on("route", () => {
